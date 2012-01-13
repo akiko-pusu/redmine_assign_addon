@@ -7,8 +7,7 @@ Redmine::Plugin.register :redmine_assign_addon do
   author 'Akiko Takano'
   description 'This is plug-in aiming to support selecting a user to be assigned.'
   version '0.0.1'
-  #url 'http://example.com/path/to/plugin'
-  #author_url 'http://example.com/about'
+  url 'https://github.com/akiko-pusu/redmine_assign_addon'
 
   requires_redmine :version_or_higher => '1.2.0'
 
