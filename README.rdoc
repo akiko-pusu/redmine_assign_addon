@@ -1,0 +1,9 @@
+= assign_addon
+
+Description goes here
+This is plug-in aiming to support selecting a user to be assigned.
+
+For example, assignable user are so many but real users who should be assigned are not so many.
+This plugins add some optiongroups such as Watchers or Author who also assignable on pulldown menu.
+ 
+ 

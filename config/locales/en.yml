@@ -1,0 +1,5 @@
+# English strings go here for Rails i18n
+en:
+  label_assignable_watcher: "Assignable Watcher"
+  label_unassigned: "-- None -- "
+  setting_assign_addon_enabled: Enable Assign Addon 

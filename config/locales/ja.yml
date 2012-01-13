@@ -1,0 +1,5 @@
+# English strings go here for Rails i18n
+ja:
+  label_assignable_watcher: "ウォッチャー"
+  label_unassigned: "-- 担当者なし -- "
+  setting_assign_addon_enabled: "Assign Addonの有効化"

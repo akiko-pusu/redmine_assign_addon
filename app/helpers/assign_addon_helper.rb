@@ -1,0 +1,2 @@
+module AssignAddonHelper
+end
