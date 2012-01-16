@@ -3,3 +3,4 @@ ja:
   label_assignable_watcher: "ウォッチャー"
   label_unassigned: "-- 担当者なし -- "
   setting_assign_addon_enabled: "Assign Addonの有効化"
+  setting_assign_addon_exclude_locked_user: "ロック状態のユーザは担当者プルダウンから除外" 

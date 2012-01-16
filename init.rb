@@ -9,11 +9,12 @@ Redmine::Plugin.register :redmine_assign_addon do
   version '0.0.1'
   url 'https://github.com/akiko-pusu/redmine_assign_addon'
 
-  requires_redmine :version_or_higher => '1.2.0'
+  requires_redmine :version_or_higher => '1.3.0'
 
   settings :partial => 'settings/redmine_assign_addon',
     :default => {
-      'enable' => 'true'
+      'enable' => 'true',
+      'exclude_locked_user' => 'true'
     }
 
 end

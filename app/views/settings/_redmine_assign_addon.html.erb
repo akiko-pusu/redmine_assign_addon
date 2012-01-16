@@ -2,3 +2,8 @@
   <%=content_tag(:label, l(:setting_assign_addon_enabled))%>
   <%=check_box_tag 'settings[enable]', true, @settings['enable'] == "true" %>
 </p>
+<p>
+  <%=content_tag(:label, l(:setting_assign_addon_exclude_locked_user))%>
+  <%=check_box_tag 'settings[exclude_locked_user]', true, @settings['exclude_locked_user'] == "true" %>
+</p>
+

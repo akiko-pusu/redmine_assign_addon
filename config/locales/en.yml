@@ -3,3 +3,4 @@ en:
   label_assignable_watcher: "Assignable Watcher"
   label_unassigned: "-- None -- "
   setting_assign_addon_enabled: Enable Assign Addon 
+  setting_assign_addon_exclude_locked_user: Exclude locked user from pulldown 
