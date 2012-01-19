@@ -1,11 +1,35 @@
+# Assign Addon plugin for Redmine
+# Copyright (C) 2012 Akiko Takano
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 class AssignAddonController < ApplicationController
   unloadable
   before_filter :require_login
 
   # Update select(id="assigned_to_id")
   def load
-    @issue = Issue.find(params[:issue_id])
-    render :text => addon_options_for_select(@issue) 
+    if params[:issue_id]
+      begin 
+        @issue = Issue.find(params[:issue_id])
+        render :text => addon_options_for_select(@issue) 
+      rescue
+        render :text => "" 
+      end
+    else 
+      render :text => "" 
+    end
   end
 
   #
@@ -14,7 +38,7 @@ class AssignAddonController < ApplicationController
   private
   def addon_options_for_select(issue)
     collection = issue.assignable_users
-    return '<select id="issue_assigned_to_id" name="issue[assigned_to_id]"><option value=""></option></option>' if collection.empty?
+    return '<select id="issue_assigned_to_id" name="issue[assigned_to_id]"><option value=""></option>' if collection.empty?
 
     selected = issue.assigned_to
     s = ''
@@ -26,11 +50,6 @@ class AssignAddonController < ApplicationController
       exclude_locked = false
     end
 
-    logger = Rails.logger     
-    logger.info "Exclude Option: #{Setting.plugin_redmine_assign_addon['exclude_locked_user']}" if logger
-    logger.info "Exclude Option: #{exclude_locked}" if logger
-
-
     # override selected option
     has_selected = false
     assigned_id = issue.assigned_to_id
@@ -41,11 +60,8 @@ class AssignAddonController < ApplicationController
 
     # Get assignable Author
     author = issue.author
-    #if !author.locked? && collection.include?(author)
     if collection.include?(author)
 
-      logger.info "Author Include" if logger
-      logger.info "Author Locked? #{author.locked?} " if logger
       unless exclude_locked && author.locked?
         exclude_option = ''
         select_opt = ''
@@ -53,13 +69,11 @@ class AssignAddonController < ApplicationController
 
         exclude_option = ' (Locked)' if exclude_locked != true && author.locked?
         exclude_style = ' class="user_locked"' if exclude_locked != true && author.locked?
-        logger.info "Exclude option #{exclude_option}" if logger
         if is_assigned?(author, assigned_id)
           has_selected = true
           select_opt = ' selected="selected"' 
         end
         author_groups = %(<option value="#{author.id}"#{select_opt}#{exclude_style}>#{author.name}#{exclude_option}</option>)
-        logger.info "Author_group: #{author_groups}" if logger
       end
       if author.locked? && exclude_locked == true
         author_groups = ''
@@ -69,7 +83,6 @@ class AssignAddonController < ApplicationController
     unless author_groups.empty?
       author_groups = %(<optgroup label="#{l(:field_author)}">#{author_groups}</optgroup>)
     end
-    #logger.info "Author_group2: #{author_groups}" if logger
 
     # Get both users list
     both_users = issue.assignable_users && issue.watcher_users
@@ -94,15 +107,12 @@ class AssignAddonController < ApplicationController
       both_groups = %(<optgroup label="#{l(:label_assignable_watcher)}">#{both_groups}</optgroup>)
     end
 
-    logger.info "Both_group: #{both_groups}" if logger
 
     # Wrap Default Assignable Users with optgroup
     collection.sort.each do |element|
       exclude_option = ''
       exclude_style = ''
-      #exclude_option = ' (Locked)' if !element.is_a?(Group) && exclude_locked != true && element.locked?
       exclude_option = ' (Locked)' if !element.is_a?(Group) && element.locked?
-      #exclude_style = ' class="user_locked"' if exclude_locked != true && element.locked?
       exclude_style = ' class="user_locked"' if element.locked?
 
       next if element.locked? && exclude_locked == true 
@@ -113,11 +123,8 @@ class AssignAddonController < ApplicationController
         selected_attribute = ' ' 
       end
 
-      logger.info "Check: #{element.name}" if logger
 
-      #if !element.is_a?(Group) && !element.locked? && exclude_locked == true 
       if !element.is_a?(Group) 
-        #(element.is_a?(Group) ? groups : s) << %(<option value="#{element.id}"#{selected_attribute}>#{element.name}#{exclude_option}</option>)
         s << %(<option value="#{element.id}"#{selected_attribute}#{exclude_style}>#{element.name}#{exclude_option}</option>)
       elsif element.is_a?(Group) 
         #(element.is_a?(Group) ? groups : s) << %(<option value="#{element.id}"#{selected_attribute}>#{element.name}#{exclude_option}</option>)
@@ -134,7 +141,6 @@ class AssignAddonController < ApplicationController
 
     s = %(#{author_groups}#{both_groups}#{s}#{groups})
     s = %(<select id="issue_assigned_to_id" name="issue[assigned_to_id]"><option value=""></option>#{s}</option>)
-    #logger.info "Retval: #{s}" if logger
     return s
   end
 
