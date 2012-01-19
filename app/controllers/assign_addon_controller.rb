@@ -20,12 +20,14 @@ class AssignAddonController < ApplicationController
 
   # Update select(id="assigned_to_id")
   def load
+    logger = Rails.logger
     if params[:issue_id]
       begin 
         @issue = Issue.find(params[:issue_id])
         render :text => addon_options_for_select(@issue) 
       rescue
         render :text => "" 
+        logger.info("Error #{$!}") if logger
       end
     else 
       render :text => "" 
@@ -113,9 +115,9 @@ class AssignAddonController < ApplicationController
       exclude_option = ''
       exclude_style = ''
       exclude_option = ' (Locked)' if !element.is_a?(Group) && element.locked?
-      exclude_style = ' class="user_locked"' if element.locked?
+      exclude_style = ' class="user_locked"' if !element.is_a?(Group) && element.locked?
 
-      next if element.locked? && exclude_locked == true 
+      next if !element.is_a?(Group) && element.locked? && exclude_locked == true 
 
       if value_selected?(element, selected) && has_selected == false
         selected_attribute = ' selected="selected"' 
